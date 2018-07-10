@@ -96,9 +96,9 @@ var TrainSchedule = {
 
         TrainSchedule.InitializeFirebase();
 
-        TrainSchedule.database.ref().on("child_added", function(childSnapshot) {
-
-            TrainSchedule.PopulateSchedule(childSnapshot);
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user)
+              ContinueLoading(user);  // User is signed in.
         });
     });
 
@@ -111,3 +111,78 @@ var TrainSchedule = {
         TrainSchedule.AddTrain();
         TrainSchedule.ClearInputs();
     });
+
+
+    //***************************************************************/
+    $("#btnGoogle").click(function(event) {
+    //***************************************************************/
+    
+        event.preventDefault();
+        firebase.auth().onAuthStateChanged(GoogleLogin);
+    });
+
+
+    /***************************************************************/
+    function ContinueLoading(user) {
+    /***************************************************************/
+
+        var newLink;
+   
+        $("#loginHeader").text("Welcome, " + user.displayName + " ");
+        
+        newLink = $("<a />", {
+            text : "(sign out)",
+            class : "text-white",
+            href : "javascript:void(0)",
+            onclick : "SignOut()"
+        })
+        console.log(newLink)
+        newLink.appendTo("#loginHeader");
+
+        $("#signOut").removeClass("d-none");
+        $("#loginBody").addClass("d-none");
+        $("#trainSched").removeClass("d-none");
+        $("#addTrain").removeClass("d-none");
+
+        TrainSchedule.database.ref().on("child_added", function(childSnapshot) {
+
+            TrainSchedule.PopulateSchedule(childSnapshot);
+        });
+    }
+
+
+    /***************************************************************/
+    function GoogleLogin(user) {
+    /***************************************************************/
+
+        if (user)
+            ContinueLoading(user);      //user is signed in
+        else {
+            var provider = new firebase.auth.GoogleAuthProvider();
+
+            firebase.auth().signInWithRedirect(provider).then(function(authData) {
+                console.log("authed")
+                ContinueLoading(authData);
+
+            }).catch(function(error) {
+                console.log(error);
+            });
+        }
+    }
+
+    /***************************************************************/
+    function SignOut() {
+    /***************************************************************/
+
+        firebase.auth().signOut().then(function() {
+            $("#loginHeader").text("Login Control");
+            $("#signOut").addClass("d-none");
+            $("#loginBody").removeClass("d-none");
+            $("#trainSched").addClass("d-none");
+            $("#addTrain").addClass("d-none");  
+        })
+        .catch(function(error) {
+            // An error happened
+            alert("An Error Occurred.  Contact the Support Desk.")
+        });
+    }

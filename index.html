@@ -25,7 +25,24 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row" id="Login">
+            <div class="col-md-12">
+                <div class="card collapse-show text-white bg-primary mb-3 border-0 shadow-lg">
+                    <div class="card-header" id="loginHeader">
+                        Login Control
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="card-body bg-light text-dark" id="loginBody">
+                        <div class="col-md-3 btn-group-vertical align-items-center" id="loginBtns">
+                            <button id="btnGoogle" type="button" class="btn btn-info text-center">Login with Google</button>
+                            <button id="btnGitHub" type="button" class="btn btn-success d-none">Login with GitHub</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row trainSched d-none" id="trainSched">
             <div class="col-md-12">
                 <div class="card collapse-show text-white bg-primary mb-3 border-0 shadow-lg">
                     <div class="card-header">Current Train Schedule</div>
@@ -47,7 +64,7 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row d-none" id="addTrain">
             <div class="col-md-12">
                 <div class="card text-white bg-primary mb-3 border-0 shadow-lg">
                     <div class="card-header">Add A New Train</div>
