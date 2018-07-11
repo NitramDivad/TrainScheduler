@@ -13,7 +13,7 @@ var TrainSchedule = {
                 authDomain: "trainscheduler-2e88e.firebaseapp.com",
                 databaseURL: "https://trainscheduler-2e88e.firebaseio.com",
                 projectId: "trainscheduler-2e88e",
-                storageBucket: "",
+                storageBucket: "trainscheduler-2e88e.appspot.com",
                 messagingSenderId: "88617351484"
             };
 
@@ -70,7 +70,7 @@ var TrainSchedule = {
         },
 
         MinutesAway: function() {
-            var formattedDepart = moment(this.firstDeparture, "HH:mm"),
+            var formattedDepart = moment(this.firstDeparture, "HH:mm").subtract(1, "years"),
                 timeDifference = moment().diff(moment(formattedDepart), "minutes"),
                 remainingMins = timeDifference % this.frequency;
 
@@ -122,6 +122,15 @@ var TrainSchedule = {
     });
 
 
+    //***************************************************************/
+    $("#btnGitHub").click(function(event) {
+    //***************************************************************/
+            
+        event.preventDefault();
+        firebase.auth().onAuthStateChanged(GitHubLogin);
+    });
+
+
     /***************************************************************/
     function ContinueLoading(user) {
     /***************************************************************/
@@ -136,7 +145,6 @@ var TrainSchedule = {
             href : "javascript:void(0)",
             onclick : "SignOut()"
         })
-        console.log(newLink)
         newLink.appendTo("#loginHeader");
 
         $("#signOut").removeClass("d-none");
@@ -155,20 +163,40 @@ var TrainSchedule = {
     function GoogleLogin(user) {
     /***************************************************************/
 
-        if (user)
+        if (user) {
             ContinueLoading(user);      //user is signed in
+        }
         else {
             var provider = new firebase.auth.GoogleAuthProvider();
 
             firebase.auth().signInWithRedirect(provider).then(function(authData) {
-                console.log("authed")
                 ContinueLoading(authData);
 
             }).catch(function(error) {
-                console.log(error);
+                alert("An Error Occurred.  Contact the Support Desk.")
             });
         }
     }
+
+    /***************************************************************/
+    function GitHubLogin(user) {
+    /***************************************************************/
+    
+        if (user) {
+            ContinueLoading(user);      //user is signed in
+        }
+        else {
+            var provider = new firebase.auth.GithubAuthProvider();
+    
+            firebase.auth().signInWithRedirect(provider).then(function(authData) {
+                var token = authData.credential.accessToken;
+                ContinueLoading(authData);
+    
+            }).catch(function(error) {
+                alert("An Error Occurred.  Contact the Support Desk.")
+            });
+        }
+    }   
 
     /***************************************************************/
     function SignOut() {
@@ -182,7 +210,6 @@ var TrainSchedule = {
             $("#addTrain").addClass("d-none");  
         })
         .catch(function(error) {
-            // An error happened
             alert("An Error Occurred.  Contact the Support Desk.")
         });
     }
